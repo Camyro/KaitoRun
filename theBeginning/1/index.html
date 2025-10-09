@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Jogin</title>
+
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Micro+5&family=Pixelify+Sans:wght@400..700&display=swap');
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      transition: background-color 0.5s ease;
+      margin: 0;
+      font-family: "Micro 5", sans-serif;
+      font-weight: 400;
+      font-style: normal;
+      overflow: hidden;
+      height: 100vh;
+      width: 100vw;
+      position: fixed;
+      background-color: #f0f0f0;
+    }
+
+    .title:hover {
+      background-color: #e0e0e0;
+    }
+
+    /* Caixa de diálogo */
+    .dialog-box {
+      position: fixed;
+      top: 0;
+      left: 0;
+      z-index: 50;
+      padding: 20px;
+      display: flex;
+      flex-direction: row;
+      align-items: flex-start;
+      gap: 10px;
+    }
+
+    .perfil-container {
+      padding: 0 10px;
+    }
+
+    .perfil {
+      height: 75px;
+      width: auto;
+    }
+
+    .dialog-content {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .dialog-content img {
+      height: 75px;
+      width: auto;
+    }
+
+    .continue-text {
+      margin: 2px;
+      font-size: 28px;
+      color: white;
+      -webkit-text-stroke: 0.5px #000;
+      text-shadow: 2px 2px 0 #000;
+    }
+
+    .grid {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      width: 100%;
+      height: 200px;
+      z-index: 100;
+      pointer-events: none;
+    }
+
+    .text {
+      position: absolute;
+      top: 25px;
+      left: 140px;
+      font-size: 25px;
+      width: 280px;
+      color: black;
+    }
+
+    .numeroDoRelogio {
+      position: absolute; /* ou fixed */
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      font-size: 80px;
+    }
+
+    #world {
+      width: 100%;
+      height: 100vh;
+      position: relative;
+    }
+
+    #world section {
+      width: 100%;
+      height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      opacity: 0;
+      position: absolute;
+      top: 0;
+      left: 0;
+      transition: opacity 0.5s ease;
+    }
+
+    #world section img {
+      width: calc(100vw - 20px);
+      height: auto;
+      object-fit: cover;
+      border-radius: 10px;
+      margin: 10px;
+    }
+
+    #world section.active {
+      opacity: 1;
+    }
+
+    @media (min-width: 100vh) {
+      #world section img {
+        height: calc(100vh - 20px);
+        width: auto;
+      }
+    }
+
+    @media (max-width: 600px) {
+      .text {
+        left: 115px;
+        font-size: 20px;
+        width: 200px;
+      }
+
+      .perfil {
+        height: 55px;
+      }
+
+      .dialog-content img {
+        height: 55px;
+      }
+
+      .continue-text {
+        font-size: 20px;
+      }
+    }
+
+    @media (max-width: 500px) {
+      .text {
+        left: 97px;
+        font-size: 15px;
+        width: 150px;
+      }
+
+      .perfil {
+        height: 40px;
+      }
+
+      .dialog-content img {
+        height: 40px;
+      }
+
+      .continue-text {
+        font-size: 16px;
+      }
+    }
+
+    /* Parallax layers */
+    #sky-layer,
+    #buildings-far,
+    #buildings-medium,
+    #buildings-near {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      z-index: 0;
+    }
+  </style>
+
+</head>
+
+<body class="body">
+
+  <audio id="meuAudio" src="../midia/ringtone.mp3" loop"></audio>
+
+  <!-- Dialog box -->
+  <section class="dialog-box">
+    <div class="perfil-container">
+      <img class="perfil" id="perfil" src="../../theGame/midia/personagem/perfil/mae.png" alt="Imagem flexível" height="75px">
+    </div>
+    <div class="dialog-content">
+      <picture>
+        <source media="(max-width: 500px)" srcset="../midia/baseDaFala.png" type="image/png" height="40px">
+        <source media="(max-width: 600px)" srcset="../midia/baseDaFala.png" type="image/png" height="55px">
+        <img src="../midia/baseDaFala.png" alt="Imagem flexível" height="75px">
+      </picture>
+      <p class="continue-text">press to continue</p>
+    </div>
+    <p class="text" id="text">Hoje de tarde iremos para a China.</p>
+  </section>
+
+  <!-- Main content -->
+  <main id="world">
+
+    <section>
+      <img src="../midia/1/cozinha.png" alt="Cozinha">
+    </section>
+
+    <section>
+      <img src="../midia/1/aeroport.png" alt="Aeroporto">
+    </section>
+
+    <section>
+      <img style="max-width: 100%; height: auto; margin: 100px;" src="../midia/relo.png" alt="Avião">
+      <p class="numeroDoRelogio">07:40</p>
+    </section>
+  </main>
+
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+    let cliques = 0;
+    const sections = document.querySelectorAll('#world section');
+    const text = document.getElementById('text');
+    const perfil = document.getElementById('perfil');
+
+    // Inicializa apenas a primeira seção como ativa
+    sections[0].classList.add('active');
+
+    // Função para avançar as cenas
+    function avancarCena() {
+      if (cliques < sections.length - 1) {
+        sections[cliques].classList.remove('active');
+        cliques++;
+        sections[cliques].classList.add('active');
+      } else {
+        // Volta para o início ou redireciona
+        window.location.href = "../../theGame/index.html";
+      }
+    }
+
+    // Event listener para TECLA ESPAÇO
+    document.addEventListener('keydown', (e) => {
+      if (e.keyCode === 32 || e.key === ' ') {
+        e.preventDefault();
+        avancarCena();
+      }
+    });
+
+    // Event listener para CLICK em qualquer lugar
+    document.addEventListener('click', () => {
+      avancarCena();
+    });
+
+    let downFall = setInterval(function() {
+      if (cliques == 1) {
+        text.innerHTML = "O que é isso?";
+        perfil.src = "../../theGame/midia/personagem/perfil/perfilPadrao.png"
+        if (cliques.alarme != true) {
+          setTimeout(alarme(), 3000);
+          cliques.alarme = true
+        }
+      }
+      if (cliques == 2) {
+        text.innerHTML = "Tô atrasado pra escola.";
+      }
+    }, 20)
+
+    function alarme() {
+      const meuAudio = document.getElementById('meuAudio');
+      meuAudio.play();
+      meuAudio.volume = 0.1;
+    }
+  });
+</script>
+
+</body>
+</html>

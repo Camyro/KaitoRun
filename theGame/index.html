@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Jogin</title>
+
+  <link rel="stylesheet" href="styles.css">
+</head>
+
+<body class="body">
+  <audio id="meuAudio" src="Running Late, Dodging Fate.mp3" loop></audio>
+  <!-- Camadas de fundo em parallax (do mais distante ao mais próximo) -->
+  <div id="sky-layer"></div>
+  <div id="buildings-far"></div>
+  <div id="buildings-medium"></div>
+  <div id="buildings-near"></div>
+
+  <main id="world"></main>
+
+  <section class="dialog-box" style="padding: 20px; display: flex; justify-content: baseline; z-index: 50; position: fixed; top: 0; left: 0;">
+    <div style="padding: 0 10px;">
+      <img class="perfil" id="perfil" src="midia/personagem/perfil/perfilPadrao.png" alt="Imagem flexível" height="75px">
+    </div>
+    <picture>
+      <source media="(max-width: 500px)" srcset="midia/baseDaFala.png" type="image/png" height="40px">
+      <source media="(max-width: 600px)" srcset="midia/baseDaFala.png" type="image/png" height="55px">
+      <img src="midia/baseDaFala.png" alt="Imagem flexível" height="75px">
+    </picture>
+
+    <p class="text" id="text">Clique na tela para começar</p>
+
+    <section class="coracoes" style="display: flex; flex-direction: column;">
+      <img class="coracao" src="coracao.png">
+      <img class="coracao" src="coracao.png">
+      <img class="coracao" src="coracao.png">
+    </section>
+  </section>
+
+  <h2 id="theEnd"></h2>
+
+  <div class="grid">
+    <div class="student-container">
+      <div class="student-skin active" data-skin="normal"></div>
+      <div class="student-skin" data-skin="jakeStop"></div>
+      <div class="student-skin" data-skin="jake"></div>
+      <div class="student-skin" data-skin="flash"></div>
+      <div class="student-skin" data-skin="yoru"></div>
+    </div>
+  </div>
+</body>
+<script src="script.js" defer></script>
+
+</html>

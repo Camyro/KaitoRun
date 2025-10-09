@@ -1,0 +1,306 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Jogin</title>
+
+  <link rel="stylesheet" href="styles (copy).css">
+
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Micro+5&family=Pixelify+Sans:wght@400..700&display=swap');
+
+    body {
+      transition: background-color 0.5s ease;
+      margin: 0;
+    }
+
+    html, body {
+      margin: 0;
+      padding: 0;
+      overflow: hidden;
+      height: 100%;
+      width: 100%;
+      position: fixed;
+
+      font-family: "Micro 5", sans-serif;
+      font-weight: 400;
+      font-style: normal;
+    }
+
+    .title {
+      position: absolute;
+      top: 70%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      font-size: 50px;
+      color: white;
+      z-index: 100;
+      background-color: #28720d;
+      padding: 10px;
+      border-radius: 5px;
+      width: max-content;
+      max-width: 80%;
+
+    }
+
+    /* Caixa de diálogo */
+    .dialog-box {
+      position: fixed;
+      top: 0;
+      left: 0;
+      z-index: 50;
+      padding: 20px;
+      display: flex;
+      flex-direction: row;
+      align-items: flex-start;
+      gap: 10px;
+    }
+
+    .perfil-container {
+      padding: 0 10px;
+    }
+
+    .perfil {
+      height: 75px;
+      width: auto;
+    }
+
+    .dialog-content {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .dialog-content img {
+      height: 75px;
+      width: auto;
+    }
+
+    .continue-text {
+      margin: 2px;
+      font-size: 28px;
+      color: white;
+      -webkit-text-stroke: 0.5px #000;
+      text-shadow: 2px 2px 0 #000;
+    }
+
+    .grid {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      width: 100%;
+      height: 200px;
+      z-index: 100;
+      pointer-events: none;
+    }
+
+    .text {
+      position: absolute;
+      top: 5px;
+      left: 140px;
+      font-size: 25px;
+      width: 280px;
+      color: black;
+    }
+
+    .student {
+      position: absolute;
+      width: 63px;
+      height: 27px;
+      background-image: url('../theGame/pixil-frame-0\(7\)1.png');
+      bottom: 0px;
+    }
+
+    .student-container {
+      position: absolute;
+      bottom: 0;
+      left: 50px;
+      width: 60px;
+      height: 60px;
+      z-index: 15;
+    }
+
+    .student-skin {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      background-size: contain;
+      background-repeat: no-repeat;
+      opacity: 0;
+      transition: opacity 0.1s ease;
+      pointer-events: none;
+    }
+
+    .student-skin.active,  .title.active{
+      opacity: 1;
+    }
+
+    .student-skin[data-skin="normal"] {
+      background-image: url('../theGame/pixil-frame-0\(7\)1.png');
+    }
+
+    @media (max-width: 600px) {
+      .text {
+        left: 115px;
+        font-size: 20px;
+        width: 200px;
+      }
+
+      .perfil {
+        height: 55px;
+      }
+
+      .dialog-content img {
+        height: 55px;
+      }
+
+      .continue-text {
+        font-size: 20px;
+      }
+    }
+
+    @media (max-width: 500px) {
+      .text {
+        left: 97px;
+        top: 6px;
+        font-size: 15px;
+        width: 150px;
+      }
+
+      .perfil {
+        height: 40px;
+      }
+
+      .dialog-content img {
+        height: 40px;
+      }
+
+      .continue-text {
+        font-size: 16px;
+      }
+    }
+
+    /* Camada 1 - Céu/Nuvens (mais distante, mais lento) */
+    #sky-layer {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-image: url('../theGame/midia/ambiente/ceu.png');
+      background-repeat: repeat-x;
+      background-size: auto 100%;
+      z-index: 10;
+    }
+
+    /* Camada 2 - Prédios distantes */
+    #buildings-far {
+      position: fixed;
+      bottom: 180px;
+      left: 0;
+      width: 100%;
+      height: calc(100% - 200px);
+      background-image: url('../theGame/midia/ambiente/predios-distantes.png');
+      background-repeat: repeat-x;
+      background-size: auto 100%;
+      background-position: bottom;
+      z-index: 20;
+    }
+
+    /* Camada 3 - Prédios médios */
+    #buildings-medium {
+      position: fixed;
+      bottom: 180px;
+      left: 0;
+      width: 100%;
+      height: calc(100% - 200px);
+      background-image: url('../theGame/midia/ambiente/predios-medios.png');
+      background-repeat: repeat-x;
+      background-size: auto 100%;
+      background-position: bottom;
+      z-index: 30;
+    }
+
+    /* Camada 4 - Prédios próximos */
+    #buildings-near {
+      position: fixed;
+      bottom: 180px;
+      left: 0;
+      width: 100%;
+      height: calc(100vh - 200px);
+      background-image: url('../theGame/midia/ambiente/predios-proximos.png');
+      background-repeat: repeat-x;
+      background-size: auto 100%;
+      background-position: bottom;
+      z-index: 40;
+    }
+
+    /* Camada 5 - Chão/Estrada (mais próxima, mais rápida) */
+    #world {
+      position: absolute;
+      bottom: 0px;
+      background-image: url('../theGame/midia/ambiente/estrada.png');
+      background-repeat: repeat-x;
+      animation: slideright 500s infinite linear;
+      width: 100%;
+      height: 200px;
+      z-index: 50;
+    }
+  </style>
+  
+</head>
+
+<body class="body">
+  <!-- Camadas de fundo em parallax (do mais distante ao mais próximo) -->
+  <div id="sky-layer"></div>
+  <div id="buildings-far"></div>
+  <div id="buildings-medium"></div>
+  <div id="buildings-near"></div>
+
+  <main id="world"></main>
+
+  <!-- Dialog box -->
+  <section class="dialog-box">
+    <div class="perfil-container">
+      <img class="perfil" id="perfil" src="../theGame/midia/personagem/perfil/perfilPadrao.png" alt="Imagem flexível" height="75px">
+    </div>
+    <div class="dialog-content">
+      <picture>
+        <source media="(max-width: 500px)" srcset="../theGame/midia/baseDaFala.png" type="image/png" height="40px">
+        <source media="(max-width: 600px)" srcset="../theGame/midia/baseDaFala.png" type="image/png" height="55px">
+        <img src="../theGame/midia/baseDaFala.png" alt="Imagem flexível" height="75px">
+      </picture>
+      <p class="continue-text">press to continue</p>
+    </div>
+    <p class="text" id="text">O que aconteceu? Droga! Já são 9h.</p>
+  </section>
+
+  <div class="grid">
+    <div class="student-container">
+      <div class="student-skin active" data-skin="normal"></div>
+    </div>
+  </div>
+</body>
+  
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+
+    function command(e) {
+      window.location.href = "../";
+    }
+
+    document.addEventListener('keydown', command)
+
+    document.addEventListener('touchstart', (e) => {
+      window.location.href = "../";
+    })
+
+    document.addEventListener('click', (e) => {
+      window.location.href = "../";
+    })
+  })
+</script>
+
+</html>
