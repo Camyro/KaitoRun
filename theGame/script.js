@@ -180,7 +180,7 @@ document.addEventListener('DOMContentLoaded', () => {
               maxSpacetimeGaps = 0
               changeSkin('normal')
               text.innerHTML = textPadrao()
-              perfil.src = "midia/personagem/perfil/perfilPadrao.png"
+              perfil.src = "../midia/personagem/perfil/kaito.png"
             }
           } else if (!obstacle.atravessado && spacetimeGaps == 0) {
             endGame('Você tropeçou e não conseguiu chegar a tempo!')
@@ -452,21 +452,21 @@ document.addEventListener('DOMContentLoaded', () => {
         maxSpacetimeGaps = spacetimeGaps
         changeSkin('yoru')
         text.innerHTML = "Você entrou em uma brecha no espaço-tempo!"
-        perfil.src = "midia/personagem/perfil/perfilDoYoru.png"
+        perfil.src = "../midia/personagem/perfil/yoru.png"
         updateAbilityBar(100, true)
       } else if (abilityType === 2) {
         // Super velocidade (Flash)
         typeAbility = 2
         changeSkin('flash')
         text.innerHTML = "Você pegou um super-velocidade!"
-        perfil.src = "midia/personagem/perfil/perfilDoFlash.png"
+        perfil.src = "../midia/personagem/perfil/flahs.png"
         startAbilityTimer(50)
       } else {
         // Super pulo (Jake)
         typeAbility = 1
         changeSkin('jake')
         text.innerHTML = "Você pegou um super-pulo!"
-        perfil.src = "midia/personagem/perfil/perfilDaJake.png"
+        perfil.src = "../midia/personagem/perfil/jake.png"
         startAbilityTimer(50)
       }
 
@@ -518,7 +518,7 @@ document.addEventListener('DOMContentLoaded', () => {
         updateAbilityBar(0)
         changeSkin('normal')
         text.innerHTML = textPadrao()
-        perfil.src = "midia/personagem/perfil/perfilPadrao.png"
+        perfil.src = "../midia/personagem/perfil/kaito.png"
       }
     }, 100)
   }
@@ -676,7 +676,7 @@ document.addEventListener('DOMContentLoaded', () => {
               maxSpacetimeGaps = 0
               changeSkin('normal')
               text.innerHTML = textPadrao()
-              perfil.src = "midia/personagem/perfil/perfilPadrao.png"
+              perfil.src = "../midia/personagem/perfil/kaito.png"
             }
           } else if (!obstacle.atravessado && spacetimeGaps == 0) {
             endGame('Você tropeçou e não conseguiu chegar a tempo!')
@@ -745,31 +745,31 @@ document.addEventListener('DOMContentLoaded', () => {
 
     if (typer == 1) {
       obstacle.classList.add('pergunta1')
-      obstacle.style.backgroundImage = "url('midia/pergunta/triangulo.png')"
+      obstacle.style.backgroundImage = "url('../midia/pergunta/triangulo.png')"
     } else if (typer == 2) {
       obstacle.classList.add('arbustro')
-      obstacle.style.backgroundImage = "url('midia/obstaculo/arbustro/arbustro.png')"
+      obstacle.style.backgroundImage = "url('../midia/obstaculo/arbustro/arbustro.png')"
     } else if (typer == 3) {
       obstacle.classList.add('lamaC')
-      obstacle.style.backgroundImage = "url('midia/obstaculo/lama/lama2.png')"
+      obstacle.style.backgroundImage = "url('../midia/obstaculo/lama/lama2.png')"
     } else if (typer == 4) {
       obstacle.classList.add('lamaE')
-      obstacle.style.backgroundImage = "url('midia/obstaculo/lama/lama1.png')"
+      obstacle.style.backgroundImage = "url('../midia/obstaculo/lama/lama1.png')"
     } else if (typer == 5) {
       obstacle.classList.add('clover')
-      obstacle.style.backgroundImage = "url('midia/obstaculo/pedra/pedrinhaDaClover.png')"
+      obstacle.style.backgroundImage = "url('../midia/obstaculo/pedra/pedrinhaDaClover.png')"
     } else if (typer == 6) {
       obstacle.classList.add('creeper')
-      obstacle.style.backgroundImage = "url('midia/obstaculo/pedra/pedrinhaDoCreeper.png')"
+      obstacle.style.backgroundImage = "url('../midia/obstaculo/pedra/pedrinhaDoCreeper.png')"
     } else if (typer == 7) {
       obstacle.classList.add('rachadura')
-      obstacle.style.backgroundImage = "url('midia/obstaculo/rachadura/rachadura.png')"
+      obstacle.style.backgroundImage = "url('../midia/obstaculo/rachadura/rachadura.png')"
     } else if (typer == 8) {
       obstacle.classList.add('rachaduraX')
-      obstacle.style.backgroundImage = "url('midia/obstaculo/rachadura/rachaduraX.png')"
+      obstacle.style.backgroundImage = "url('../midia/obstaculo/rachadura/rachaduraX.png')"
     } else if (typer == 9) {
       obstacle.classList.add('rachaduraL')
-      obstacle.style.backgroundImage = "url('midia/obstaculo/rachadura/rachaduraL.png')"
+      obstacle.style.backgroundImage = "url('../midia/obstaculo/rachadura/rachaduraL.png')"
     }
 
     grid.appendChild(obstacle)
@@ -897,7 +897,7 @@ document.addEventListener('DOMContentLoaded', () => {
         height: 40px;
         width: auto;
         aspect-ratio: 2 / 1;
-        background-image: url('midia/baseDoTime.png');
+        background-image: url('../midia/baseDoTime.png');
         background-size: 100% 100%;
         background-position: center;
         background-repeat: no-repeat;

@@ -38,7 +38,7 @@ html, body {
 #world {
   position: absolute;
   bottom: 0px;
-  background-image: url('midia/ambiente/estrada.png');
+  background-image: url('../midia/ambiente/estrada.png');
   background-repeat: repeat-x;
   animation: slideright 600s infinite linear;
   -webkit-animation: slideright 600s infinite linear;
@@ -60,7 +60,7 @@ html, body {
   position: absolute;
   width: 27px;
   height: 63px;
-  background-image: url('midia/personagem/gif/personagem.gif');
+  background-image: url('../midia/personagem/gif/personagem.gif');
   bottom: 0px;
 }
 
@@ -69,7 +69,7 @@ html, body {
   position: absolute !important;
   width: 64px !important;
   height: 64px !important;
-  background-image: url('midia/pergunta/triangulo.png') !important;
+  background-image: url('../midia/pergunta/triangulo.png') !important;
   background-size: contain !important;
   background-repeat: no-repeat !important;
   background-position: center !important;
@@ -82,7 +82,7 @@ html, body {
   position: absolute;
   width: 64px;
   height: 64px;
-  background-image: url('midia/obstaculo/rachadura/rachadura.png');
+  background-image: url('../midia/obstaculo/rachadura/rachadura.png');
   background-size: contain;
   background-repeat: no-repeat;
   bottom: 0px;
@@ -93,7 +93,7 @@ html, body {
   position: absolute;
   width: 64px;
   height: 64px;
-  background-image: url('midia/obstaculo/rachadura/rachaduraX.png');
+  background-image: url('../midia/obstaculo/rachadura/rachaduraX.png');
   background-size: contain;
   background-repeat: no-repeat;
   bottom: 0px;
@@ -104,7 +104,7 @@ html, body {
   position: absolute;
   width: 64px;
   height: 64px;
-  background-image: url('midia/obstaculo/rachadura/rachaduraL.png');
+  background-image: url('../midia/obstaculo/rachadura/rachaduraL.png');
   background-size: contain;
   background-repeat: no-repeat;
   bottom: 0px;
@@ -115,7 +115,7 @@ html, body {
   position: absolute;
   width: 64px;
   height: 64px;
-  background-image: url('midia/obstaculo/lama/lama2.png');
+  background-image: url('../midia/obstaculo/lama/lama2.png');
   background-size: contain;
   background-repeat: no-repeat;
   bottom: 0px;
@@ -126,7 +126,7 @@ html, body {
   position: absolute;
   width: 64px;
   height: 64px;
-  background-image: url('midia/obstaculo/lama/lama1.png');
+  background-image: url('../midia/obstaculo/lama/lama1.png');
   background-size: contain;
   background-repeat: no-repeat;
   bottom: 0px;
@@ -137,7 +137,7 @@ html, body {
   position: absolute;
   width: 64px;
   height: 64px;
-  background-image: url('midia/obstaculo/pedra/pedrinhadaClover.png');
+  background-image: url('../midia/obstaculo/pedra/pedrinhadaClover.png');
   background-size: contain;
   background-repeat: no-repeat;
   bottom: 0px;
@@ -148,7 +148,7 @@ html, body {
   position: absolute;
   width: 64px;
   height: 64px;
-  background-image: url('midia/obstaculo/pedra/pedrinhadaCreeper.png');
+  background-image: url('../midia/obstaculo/pedra/pedrinhadaCreeper.png');
   background-size: contain;
   background-repeat: no-repeat;
   bottom: 0px;
@@ -159,7 +159,7 @@ html, body {
   position: absolute !important;
   width: 64px !important;
   height: 64px !important;
-  background-image: url('midia/obstaculo/arbustro/arbustro.png') !important;
+  background-image: url('../midia/obstaculo/arbustro/arbustro.png') !important;
   background-size: contain !important;
   background-repeat: no-repeat !important;
   bottom: 0px !important;
@@ -200,23 +200,23 @@ html, body {
 }
 
 .student-skin[data-skin="normal"] {
-  background-image: url('midia/personagem/gif/personagem.gif');
+  background-image: url('../midia/personagem/gif/kaito.gif');
 }
 
 .student-skin[data-skin="jakeStop"] {
-  background-image: url('midia/personagem/png/jakeParada.png');
+  background-image: url('../midia/personagem/png/jakeParada.png');
 }
 
 .student-skin[data-skin="jake"] {
-  background-image: url('midia/personagem/gif/jake.gif');
+  background-image: url('../midia/personagem/gif/jake.gif');
 }
 
 .student-skin[data-skin="flash"] {
-  background-image: url('midia/personagem/gif/flash.gif');
+  background-image: url('../midia/personagem/gif/flash.gif');
 }
 
 .student-skin[data-skin="yoru"] {
-  background-image: url('midia/personagem/gif/yoru.gif');
+  background-image: url('../midia/personagem/gif/yoru.gif');
 }
 
 #theEnd{
@@ -267,47 +267,18 @@ html, body {
   }
 }
 
-/* Camada 1 - Céu/Nuvens (mais distante, mais lento) */
-#sky-layer {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background-image: url('midia/ambiente/ceu.png');
-  background-repeat: repeat-x;
-  background-size: auto 100%;
-  animation: slideright 1200s infinite linear;
-  z-index: 10;
-}
-
-/* Camada 2 - Prédios distantes */
-#buildings-far {
-  position: fixed;
-  bottom: 180px;
-  left: 0;
-  width: 100%;
-  height: calc(100% - 200px);
-  background-image: url('midia/ambiente/predios-distantes.png');
-  background-repeat: repeat-x;
-  background-size: auto 100%;
-  background-position: bottom;
-  animation: slideright 900s infinite linear;
-  z-index: 20;
-}
-
 /* Camada 3 - Prédios médios */
 #buildings-medium {
   position: fixed;
   bottom: 180px;
   left: 0;
   width: 100%;
-  height: calc(100% - 200px);
-  background-image: url('midia/ambiente/predios-medios.png');
+  height: calc(100vh - 180px);
+  background-image: url('../midia/ambiente/floresta.png');
   background-repeat: repeat-x;
   background-size: auto 100%;
   background-position: bottom;
-  animation: slideright 700s infinite linear;
+  animation: slideright 1000s infinite linear;
   z-index: 30;
 }
 
@@ -317,12 +288,12 @@ html, body {
   bottom: 180px;
   left: 0;
   width: 100%;
-  height: calc(100vh - 200px);
-  background-image: url('midia/ambiente/predios-proximos.png');
+  height: calc(100vh - 180px);
+  background-image: url('../midia/ambiente/cazonas.png');
   background-repeat: repeat-x;
   background-size: auto 100%;
   background-position: bottom;
-  animation: slideright 500s infinite linear;
+  animation: slideright 2000s infinite linear;
   z-index: 40;
 }
 
@@ -330,7 +301,7 @@ html, body {
 #world {
   position: absolute;
   bottom: 0px;
-  background-image: url('midia/ambiente/estrada.png');
+  background-image: url('../midia/ambiente/estrada.png');
   background-repeat: repeat-x;
   animation: slideright 500s infinite linear;
   -webkit-animation: slideright 500s infinite linear;
