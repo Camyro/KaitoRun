@@ -194,38 +194,41 @@
 
 <body class="body">
 
-  <audio id="meuAudio" src="../../midia/audios/ringtone.mp3" loop"></audio>
+  <audio id="meuAudio" src="../../../midia/audios/ringtone.mp3" loop"></audio>
 
   <!-- Dialog box -->
   <section class="dialog-box">
     <div class="perfil-container">
-      <img class="perfil" id="perfil" src="../../midia/personagem/perfil/mae.png" alt="Imagem flexível" height="75px">
+      <img class="perfil" id="perfil" src="../../../midia/personagem/perfil/kaito.png" alt="Imagem flexível" height="75px">
     </div>
     <div class="dialog-content">
       <picture>
-        <source media="(max-width: 500px)" srcset="../../midia/baseDaFala.png" type="image/png" height="40px">
-        <source media="(max-width: 600px)" srcset="../../midia/baseDaFala.png" type="image/png" height="55px">
-        <img src="../../midia/baseDaFala.png" alt="Imagem flexível" height="75px">
+        <source media="(max-width: 500px)" srcset="../../../midia/baseDaFala.png" type="image/png" height="40px">
+        <source media="(max-width: 600px)" srcset="../../../midia/baseDaFala.png" type="image/png" height="55px">
+        <img src="../../../midia/baseDaFala.png" alt="Imagem flexível" height="75px">
       </picture>
       <p class="continue-text">press to continue</p>
     </div>
-    <p class="text" id="text">Hoje de tarde iremos para a China.</p>
+    <p class="text" id="text">	- Bom dia professor, posso entra?
+</p>
   </section>
 
   <!-- Main content -->
   <main id="world">
 
     <section>
-      <img src="../../midia/historias/cozinha.png" alt="Cozinha">
+      <img src="../../../midia/historias/kaitoNaSala.png">
     </section>
 
     <section>
-      <img src="../../midia/historias/aeroport.png" alt="Aeroporto">
+      <img src="../../../midia/historias/professor.png">
     </section>
 
     <section>
-      <img style="max-width: 100%; height: auto; margin: 100px;" src="../../midia/historias/relo.png" alt="Avião">
-      <p class="numeroDoRelogio">07:40</p>
+      <img src="../../../midia/historias/demonio.png">
+    </section>
+    <section>
+      <img src="../../../midia/historias/kaitoNaMesa.png">
     </section>
   </main>
 
@@ -247,7 +250,7 @@
         sections[cliques].classList.add('active');
       } else {
         // Volta para o início ou redireciona
-        window.location.href = "../../theGame/";
+        window.location.href = "../../../";
       }
     }
 
@@ -266,23 +269,17 @@
 
     let downFall = setInterval(function() {
       if (cliques == 1) {
-        text.innerHTML = "O que é isso?";
-        perfil.src = "../../midia/personagem/perfil/kaito.png"
-        if (cliques.alarme != true) {
-          setTimeout(alarme(), 3000);
-          cliques.alarme = true
-        }
+        text.innerHTML = "Sim, agora vou falar quem precisa entregar a atividade.";
+        perfil.src = "../../../midia/personagem/perfil/professor.png"
       }
       if (cliques == 2) {
-        text.innerHTML = "Tô atrasado pra escola.";
+        text.innerHTML = "Castro, Adriano, Mc Marcos, Yago, Ronaldo e Otavio.";
+      }
+      if (cliques == 3) {
+        text.innerHTML = "Vai se f****! Poderia ta dormindo.";
+        perfil.src = "../../../midia/personagem/perfil/kaito.png"
       }
     }, 20)
-
-    function alarme() {
-      const meuAudio = document.getElementById('meuAudio');
-      meuAudio.play();
-      meuAudio.volume = 0.1;
-    }
   });
 </script>
 

@@ -6,6 +6,10 @@ document.addEventListener('DOMContentLoaded', () => {
   const theEnd = document.getElementById('theEnd')
   const text = document.getElementById('text')
   const perfil = document.getElementById('perfil')
+  const songFlash = document.getElementById('songFlash')
+  const songYoru = document.getElementById('songYoru')
+  const music = document.getElementById('music')
+  const songJump = document.getElementById('songJump')
   let isJumping = false
   let gravity = 0.9
   let isGameOver = false
@@ -23,6 +27,8 @@ document.addEventListener('DOMContentLoaded', () => {
   let isQuestionActive = false
   let questionTimerInterval = null
   let allObstacles = []
+  let triangulo = false
+  let trianguloActive = false
 
   const questions = [
     {
@@ -257,12 +263,16 @@ document.addEventListener('DOMContentLoaded', () => {
         abilityBar.style.backgroundColor = 'rgba(225, 0, 0, 1)'
       }
     } else {
+      songFlash.pause();
+      songYoru.pause()
+      music.play()
       abilityBar.style.transition = 'width 0.5s ease-out, opacity 0.5s ease-out'
       abilityBar.style.opacity = '0'
       setTimeout(() => {
         abilityBarContainer.style.display = 'none'
         abilityBar.style.transition = 'width 0.1s linear'
         abilityBar.style.opacity = '1'
+        triangulo = false
       }, 500)
     }
   }
@@ -280,6 +290,8 @@ document.addEventListener('DOMContentLoaded', () => {
       usedQuestions = []
       availableQuestions = questions
     }
+
+    setTimeout(trianguloActive = true, 20);
 
     const randomIndex = Math.floor(Math.random() * availableQuestions.length)
     const questionData = availableQuestions[randomIndex]
@@ -446,11 +458,15 @@ document.addEventListener('DOMContentLoaded', () => {
       // Resposta correta - dar habilidade aleatória
       const abilityType = Math.floor(Math.random() * 3) + 1
 
+
       if (abilityType === 1) {
         // Brecha no espaço-tempo (Yoru)
         spacetimeGaps = Math.floor(Math.pow(Math.random(), 3) * 7 + 3)
         maxSpacetimeGaps = spacetimeGaps
         changeSkin('yoru')
+        songYoru.currentTime = 0;
+        songYoru.play();
+        songYoru.volume = 0.9;
         text.innerHTML = "Você entrou em uma brecha no espaço-tempo!"
         perfil.src = "../midia/personagem/perfil/yoru.png"
         updateAbilityBar(100, true)
@@ -458,6 +474,9 @@ document.addEventListener('DOMContentLoaded', () => {
         // Super velocidade (Flash)
         typeAbility = 2
         changeSkin('flash')
+        songFlash.currentTime = 0;
+        songFlash.play();
+        songFlash.volume = 0.3;
         text.innerHTML = "Você pegou um super-velocidade!"
         perfil.src = "../midia/personagem/perfil/flahs.png"
         startAbilityTimer(50)
@@ -475,6 +494,10 @@ document.addEventListener('DOMContentLoaded', () => {
       resumeGame()
     } else {
       // Resposta errada - perder vida
+      trianguloActive = false
+      triangulo = false
+
+      
       if (lives > 1) {
         if (lives == 3) {
           document.querySelectorAll('.coracao')[2].style.display = 'none'
@@ -498,6 +521,7 @@ document.addEventListener('DOMContentLoaded', () => {
   function startAbilityTimer(duration) {
     if (abilityTimer) {
       clearInterval(abilityTimer)
+      triangulo = false
     }
 
     let remainingTime = duration
@@ -513,6 +537,9 @@ document.addEventListener('DOMContentLoaded', () => {
       if (remainingTime <= 0) {
         clearInterval(abilityTimer)
         abilityTimer = null
+        songFlash.pause();
+        songYoru.pause()
+        music.play()
         timeAbility = 0
         typeAbility = 0
         updateAbilityBar(0)
@@ -535,9 +562,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
   function startGame() {
     if (!start && spacetimeGaps == 0) {
-      const meuAudio = document.getElementById('meuAudio');
-      meuAudio.play();
-      meuAudio.volume = 0.05; // Diminui o volume em 0.1 (ou 10%)
+      const music = document.getElementById('music');
+      music.play();
+      music.volume = 0.05; // Diminui o volume em 0.1 (ou 10%)
       createObstacle(1)
       scheduleNextObstacle()
       start = true
@@ -548,9 +575,15 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   function performJump() {
-    if (!isJumping && start && spacetimeGaps == 0 && !isQuestionActive) {
-      isJumping = true
-      jump()
+    if (trianguloActive){
+      trianguloActive = false
+    } else {
+      if (!isJumping && start && spacetimeGaps == 0 && !isQuestionActive) {
+        songJump.play()
+        songJump.volume = 0.1;
+        isJumping = true
+        jump()
+      }
     }
   }
 
@@ -693,6 +726,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         if (typer == 1) {
           obstacle.vidaPerdida = true
+          triangulo = false
 
           if (lives == 1) {
             endGame('Você tropeçou e não conseguiu chegar a tempo!')
@@ -714,7 +748,7 @@ document.addEventListener('DOMContentLoaded', () => {
     theEnd.innerHTML = message
     isGameOver = true
 
-    window.location.href = "../theEnd/KaitoDesmaiado.html";
+    window.location.href = "../theEnd/lost/kaitoPassedOut/";
 
     if (body.firstChild) {
       body.removeChild(body.firstChild)
@@ -786,7 +820,7 @@ document.addEventListener('DOMContentLoaded', () => {
     setTimeout(() => {
       let typeOfObstacle = 0
 
-      if (timeAbility == 0 && spacetimeGaps == 0) {
+      if (timeAbility == 0 && spacetimeGaps == 0 && triangulo == false) {
         typeOfObstacle = Math.floor(Math.random() * 5) + 1
       } else {
         typeOfObstacle = Math.floor(Math.random() * 4) + 2
@@ -794,6 +828,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
       if (typeOfObstacle === 1) {
         createObstacle(1)
+        triangulo = true
       } else if (typeOfObstacle === 2) {
         createObstacle(2)
       } else if (typeOfObstacle === 3) {
@@ -843,8 +878,8 @@ document.addEventListener('DOMContentLoaded', () => {
           return
         }
 
-        if (gameTime % 10 === 0 && gameSpeed < 3) {
-          gameSpeed += 0.10
+        if (gameTime % 10 === 0 && gameSpeed < 2) {
+          gameSpeed += 0.1
         }
       }
     }, 1000)
@@ -856,6 +891,7 @@ document.addEventListener('DOMContentLoaded', () => {
     if (abilityTimer) clearInterval(abilityTimer)
 
     text.innerHTML = 'VOCÊ VENCEU! Chegou a tempo para a aula! 🎉'
+    window.location.href = "../theEnd/won/1/";
 
     if (body.firstChild && body.firstChild !== theEnd.parentElement) {
       body.removeChild(body.firstChild)

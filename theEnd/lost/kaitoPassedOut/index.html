@@ -109,7 +109,7 @@
       position: absolute;
       width: 63px;
       height: 27px;
-      background-image: url('../midia/personagem/png/kaitoDeitado.png');
+      background-image: url('../../../midia/personagem/png/kaitoDeitado.png');
       bottom: 0px;
     }
 
@@ -138,7 +138,7 @@
     }
 
     .student-skin[data-skin="normal"] {
-      background-image: url('../midia/personagem/png/kaitoDeitado.png');
+      background-image: url('../../../midia/personagem/png/kaitoDeitado.png');
     }
 
     @media (max-width: 600px) {
@@ -189,7 +189,7 @@
       left: 0;
       width: 100%;
       height: calc(100vh - 180px);
-      background-image: url('../midia/ambiente/floresta.png');
+      background-image: url('../../../midia/ambiente/floresta.png');
       background-repeat: repeat-x;
       background-size: auto 100%;
       background-position: bottom;
@@ -204,7 +204,7 @@
       left: 0;
       width: 100%;
       height: calc(100vh - 180px);
-      background-image: url('../midia/ambiente/cazonas.png');
+      background-image: url('../../../midia/ambiente/cazonas.png');
       background-repeat: repeat-x;
       background-size: auto 100%;
       background-position: bottom;
@@ -216,7 +216,7 @@
     #world {
       position: absolute;
       bottom: 0px;
-      background-image: url('../midia/ambiente/estrada.png');
+      background-image: url('../../../midia/ambiente/estrada.png');
       background-repeat: repeat-x;
       animation: slideright 500s infinite linear;
       -webkit-animation: slideright 500s infinite linear;
@@ -237,13 +237,13 @@
   <!-- Dialog box -->
   <section class="dialog-box">
     <div class="perfil-container">
-      <img class="perfil" id="perfil" src="../midia/personagem/perfil/kaito.png" alt="Imagem flexível" height="75px">
+      <img class="perfil" id="perfil" src="../../../midia/personagem/perfil/kaito.png" alt="Imagem flexível" height="75px">
     </div>
     <div class="dialog-content">
       <picture>
-        <source media="(max-width: 500px)" srcset="../midia/baseDaFala.png" type="image/png" height="40px">
-        <source media="(max-width: 600px)" srcset="../midia/baseDaFala.png" type="image/png" height="55px">
-        <img src="../midia/baseDaFala.png" alt="Imagem flexível" height="75px">
+        <source media="(max-width: 500px)" srcset="../../../midia/baseDaFala.png" type="image/png" height="40px">
+        <source media="(max-width: 600px)" srcset="../../../midia/baseDaFala.png" type="image/png" height="55px">
+        <img src="../../../midia/baseDaFala.png" alt="Imagem flexível" height="75px">
       </picture>
       <p class="continue-text">press to continue</p>
     </div>
@@ -261,17 +261,17 @@
   document.addEventListener('DOMContentLoaded', () => {
 
     function command(e) {
-      window.location.href = "../";
+      window.location.href = "../../../";
     }
 
     document.addEventListener('keydown', command)
 
     document.addEventListener('touchstart', (e) => {
-      window.location.href = "../";
+      window.location.href = "../../../";
     })
 
     document.addEventListener('click', (e) => {
-      window.location.href = "../";
+      window.location.href = "../../../";
     })
   })
 </script>
