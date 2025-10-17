@@ -16,4 +16,5 @@ In the game, we have the following abilities:
 1. **Yoru** – Grants the player the ability to pass a random number of obstacles without losing the game. *(Status: Completed)*
 2. **Flash** – Allows the player to make time move twice as fast for a limited period. *(Status: Completed)*
 3. **Isa** – Gives the player a shield that lets them pass through obstacles without losing for a limited time. *(Status: In Progress)*
+
 These abilities make the game more fun, dynamic, and easier to complete.
