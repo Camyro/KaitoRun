@@ -373,7 +373,7 @@ document.addEventListener('DOMContentLoaded', () => {
         margin: 10px 0;
         font-family: "Micro 5", sans-serif;
         font-size: 18px;
-        background-color: #4CAF50;
+        background-color: rgb(0, 0, 225);
         color: white;
         border: none;
         border-radius: 5px;
@@ -382,12 +382,12 @@ document.addEventListener('DOMContentLoaded', () => {
       `
 
       button.onmouseover = () => {
-        button.style.backgroundColor = '#45a049'
+        button.style.backgroundColor = 'rgb(0, 0, 225)'
         button.style.transform = 'scale(1.05)'
       }
 
       button.onmouseout = () => {
-        button.style.backgroundColor = '#4CAF50'
+        button.style.backgroundColor = 'rgb(0, 0, 225)'
         button.style.transform = 'scale(1)'
       }
 
@@ -470,7 +470,7 @@ document.addEventListener('DOMContentLoaded', () => {
         text.innerHTML = "Você entrou em uma brecha no espaço-tempo!"
         perfil.src = "../midia/personagem/perfil/yoru.png"
         updateAbilityBar(100, true)
-      } else if (abilityType === 2) {
+      } else {
         // Super velocidade (Flash)
         typeAbility = 2
         changeSkin('flash')
@@ -479,13 +479,6 @@ document.addEventListener('DOMContentLoaded', () => {
         songFlash.volume = 0.3;
         text.innerHTML = "Você pegou um super-velocidade!"
         perfil.src = "../midia/personagem/perfil/flahs.png"
-        startAbilityTimer(50)
-      } else {
-        // Super pulo (Jake)
-        typeAbility = 1
-        changeSkin('jake')
-        text.innerHTML = "Você pegou um super-pulo!"
-        perfil.src = "../midia/personagem/perfil/jake.png"
         startAbilityTimer(50)
       }
 
@@ -648,9 +641,6 @@ document.addEventListener('DOMContentLoaded', () => {
             studentPosition = 0
             studentContainer.style.bottom = '0px'
             isJumping = false
-            if (typeAbility == 1){
-              changeSkin('jake')
-            }
           }
         }, 20)
       }
@@ -677,7 +667,7 @@ document.addEventListener('DOMContentLoaded', () => {
         return
       }
 
-      obstaclePosition -= (timeAbility > 0 && typeAbility == 2 ? 10 * 0.2 : 10) * gameSpeed
+      obstaclePosition -= 10 * gameSpeed
       obstacle.style.left = obstaclePosition + 'px'
 
       // Colisão - PROTEÇÃO: não detecta colisão durante perguntas
