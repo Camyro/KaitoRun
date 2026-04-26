@@ -73,6 +73,7 @@
       <label class="form-label">Tempo Limite (segundos)</label>
       <input type="number" class="form-input" id="qTime" value="10" min="3" max="120" />
     </div>
+
     <div class="modal-footer">
       <button class="btn" onclick="closeModal()">Cancelar</button>
       <button class="btn btn-primary" onclick="saveQuestion()">Salvar</button>
@@ -120,6 +121,8 @@
     </div>
 
     <div class="ai-loading-indicator" id="aiLoading">⏳ Gerando questões...</div>
+
+    <p>Obs: O Caos IA pode cometer erros verifique as respostas geradas.</p>
 
     <div class="modal-footer">
       <button class="btn" onclick="closeAiModal()">Cancelar</button>
