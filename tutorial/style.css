@@ -1,0 +1,176 @@
+@import url('https://fonts.googleapis.com/css2?family=Micro+5&family=Press+Start+2P&display=swap');
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html, body {
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  font-family: "Micro 5", sans-serif;
+}
+
+/* BACKGROUNDS */
+#buildings-medium {
+  position: fixed;
+  bottom: 180px;
+  left: 0;
+  width: 100%;
+  height: calc(100vh - 180px);
+  background-image: url('../midia/ambiente/floresta.png');
+  background-repeat: repeat-x;
+  background-size: auto 100%;
+  background-position: bottom;
+  animation: slideright 700s infinite linear;
+  z-index: 1;
+}
+
+#buildings-near {
+  position: fixed;
+  bottom: 180px;
+  left: 0;
+  width: 100%;
+  height: calc(100vh - 180px);
+  background-image: url('../midia/ambiente/cazonas.png');
+  background-repeat: repeat-x;
+  background-size: auto 100%;
+  background-position: bottom;
+  animation: slideright 500s infinite linear;
+  z-index: 2;
+}
+
+#world {
+  position: fixed;
+  bottom: 0;
+  width: 100%;
+  height: 200px;
+  background-image: url('../midia/ambiente/estrada.png');
+  background-repeat: repeat-x;
+  animation: slideright 500s infinite linear;
+  z-index: 3;
+}
+
+@keyframes slideright {
+  from { background-position: 0 bottom; }
+  to { background-position: -10000px bottom; }
+}
+
+/* PERSONAGEM */
+.student-container {
+  position: fixed;
+  bottom: 200px;
+  left: 50px;
+  width: 27px;
+  height: 63px;
+  z-index: 10;
+}
+
+.student {
+  width: 100%;
+  height: 100%;
+  background-image: url('../midia/personagem/gif/personagem.gif');
+  background-repeat: no-repeat;
+  background-size: contain;
+}
+
+/* TUTORIAL */
+#tutorial-wrap {
+  position: fixed;
+  inset: 0;
+  z-index: 20;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+}
+
+#tutorial-wrap::before,
+#tutorial-wrap::after {
+  content: '';
+  flex: 1;
+}
+
+#tutorial-box {
+  background: #f0f0e8;
+  border: 3px solid #111;
+  box-shadow: 6px 6px 0 #111;
+  padding: clamp(12px, 2.5vw, 24px) clamp(14px, 3.5vw, 28px);
+  width: min(580px, 100%);
+  display: flex;
+  flex-direction: column;
+  gap: clamp(8px, 1.5vh, 14px);
+  margin: auto;
+}
+
+#tutorial-title {
+  font-size: clamp(28px, 5vw, 46px);
+  border-bottom: 3px solid #111;
+  padding-bottom: 8px;
+}
+
+.tip {
+  display: flex;
+  gap: 10px;
+}
+
+.tip-text {
+  font-family: 'Press Start 2P', monospace;
+  font-size: clamp(6px, 1vw, 8px);
+  line-height: 2;
+}
+
+.tip-text strong { color: #c0392b; }
+.tip-text .ok { color: #27ae60; }
+
+.divider {
+  width: 100%;
+  height: 2px;
+  background: #111;
+  opacity: 0.12;
+}
+
+/* BOTÃO */
+.btn-start {
+  display: block;
+  text-decoration: none;
+  font-family: 'Press Start 2P', monospace;
+  font-size: clamp(8px, 1.5vw, 11px);
+  color: #111;
+  background: #f5c518;
+  border: 3px solid #111;
+  padding: 10px 0;
+  text-align: center;
+  box-shadow: 4px 4px 0 #111;
+  transition: 0.05s;
+}
+
+.btn-start:hover {
+  transform: translate(-2px, -2px);
+  box-shadow: 6px 6px 0 #111;
+}
+
+.btn-start:active {
+  transform: translate(2px, 2px);
+  box-shadow: 2px 2px 0 #111;
+}
+
+/* RESPONSIVO */
+@media (max-width: 480px) {
+  #buildings-medium,
+  #buildings-near {
+    bottom: 120px;
+    height: calc(100vh - 120px);
+  }
+
+  #world { height: 130px; }
+
+  .student-container {
+    bottom: 130px;
+    left: 20px;
+  }
+}

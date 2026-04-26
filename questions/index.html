@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Quiz Pack Manager</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+<!-- Personagem original -->
+<div class="student-container"><div class="student"></div></div>
+
+<div class="app">
+  <!-- HEADER -->
+  <header class="header">
+    <button class="btn-hamburger" onclick="toggleSidebar()">☰</button>
+    <div class="header-logo">Questions</div>
+    <div class="header-sub">Manager</div>
+  </header>
+
+  <!-- SIDEBAR BACKDROP -->
+  <div class="sidebar-backdrop" id="sidebarBackdrop" onclick="closeSidebar()"></div>
+
+  <!-- SIDEBAR -->
+  <aside class="sidebar">
+    <div class="sidebar-head">
+      <span class="sidebar-title">PACKS</span>
+      <button class="btn btn-primary btn-sm" onclick="openNewPackModal()">+ Novo</button>
+    </div>
+    <div class="sidebar-list" id="packList"></div>
+  </aside>
+
+  <!-- MAIN -->
+  <main class="main" id="mainPanel">
+    <div class="empty-state" id="emptyState">
+      <div class="empty-state-icon">📦</div>
+      <p>Selecione ou crie um pack</p>
+    </div>
+    <div class="pack-detail" id="packDetail" style="display:none;"></div>
+  </main>
+</div>
+
+<!-- QUESTION MODAL -->
+<div class="modal-overlay" id="questionModal">
+  <div class="modal">
+    <div class="modal-title">
+      <span id="modalTitle">Nova Pergunta</span>
+      <button class="btn btn-icon" onclick="closeModal()">✕</button>
+    </div>
+    <div class="form-group">
+      <label class="form-label">Pergunta</label>
+      <input type="text" class="form-input" id="qText" placeholder="Digite a pergunta..." />
+    </div>
+    <div class="form-group">
+      <label class="form-label">Opções — selecione a correta</label>
+      <div class="options-grid">
+        <div class="option-row"><span class="option-letter">A</span><input type="radio" name="correct" value="0" class="option-radio" /><input type="text" class="form-input" id="opt0" placeholder="Opção A" /></div>
+        <div class="option-row"><span class="option-letter">B</span><input type="radio" name="correct" value="1" class="option-radio" /><input type="text" class="form-input" id="opt1" placeholder="Opção B" /></div>
+        <div class="option-row"><span class="option-letter">C</span><input type="radio" name="correct" value="2" class="option-radio" /><input type="text" class="form-input" id="opt2" placeholder="Opção C" /></div>
+        <div class="option-row"><span class="option-letter">D</span><input type="radio" name="correct" value="3" class="option-radio" /><input type="text" class="form-input" id="opt3" placeholder="Opção D" /></div>
+      </div>
+    </div>
+    <div class="form-group">
+      <label class="form-label">Tempo Limite (segundos)</label>
+      <input type="number" class="form-input" id="qTime" value="10" min="3" max="120" />
+    </div>
+    <div class="modal-footer">
+      <button class="btn" onclick="closeModal()">Cancelar</button>
+      <button class="btn btn-primary" onclick="saveQuestion()">Salvar</button>
+    </div>
+  </div>
+</div>
+
+<!-- CONFIRM -->
+<div class="confirm-overlay" id="confirmOverlay">
+  <div class="confirm-box">
+    <div class="confirm-title" id="confirmTitle">Confirmar</div>
+    <div class="confirm-msg" id="confirmMsg"></div>
+    <div class="confirm-footer">
+      <button class="btn" onclick="closeConfirm()">Cancelar</button>
+      <button class="btn btn-danger" id="confirmOkBtn">Excluir</button>
+    </div>
+  </div>
+</div>
+
+<!-- TOAST -->
+<div class="toast-container" id="toastContainer"></div>
+
+<script src="script.js"></script>
+</body>
+</html>

@@ -24,19 +24,13 @@ document.addEventListener('DOMContentLoaded', () => {
   let abilityTimer = null
   let lives = 3
   let usedQuestions = []
-  let wrongQuestions = []       // NOVO: fila de perguntas erradas para repetir
   let isQuestionActive = false
   let questionTimerInterval = null
   let allObstacles = []
   let triangulo = false
   let trianguloActive = false
-  const params = new URLSearchParams(window.location.search);
-  const questionParam = params.get('question');
 
-  // NOVO: flag que indica se o modo é personalizado (tempo infinito)
-  let isCustomMode = false
-
-  let questions = [
+  const questions = [
     {
       question: "Qual é a capital do Brasil?",
       options: ["São Paulo", "Rio de Janeiro", "Brasília", "Salvador"],
@@ -98,43 +92,28 @@ document.addEventListener('DOMContentLoaded', () => {
       timeLimit: 12
     }
   ]
-  console.log(questions)
-
-  if (questionParam !== null) {
-    try {
-      const decoded = decodeURIComponent(questionParam);
-      const parsed = JSON.parse(decoded);
-
-      questions = parsed;
-      isCustomMode = true;   // NOVO: ativa modo personalizado
-      console.log("Depois:", questions);
-
-    } catch (erro) {
-      console.error("Erro ao ler a pergunta da URL:", erro);
-    }
-  } else {
-    console.warn("Parâmetro 'question' não encontrado na URL. Usando perguntas padrão.");
-  }
-
-  // NOVO: rastreia quantas perguntas únicas já foram acertadas no modo personalizado
-  let customQuestionsAnsweredCorrectly = []
 
   function pauseGame() {
+    // Remover todos os obstáculos que ainda não apareceram na tela
     allObstacles.forEach(obs => {
       if (obs.moveInterval) {
         clearInterval(obs.moveInterval)
       }
+      // Remover obstáculos que estão fora da tela (ainda não apareceram)
       const obstaclePosition = parseInt(obs.element.style.left)
       if (obstaclePosition > window.innerWidth && obs.element.parentNode) {
         grid.removeChild(obs.element)
       } else if (!obs.paused) {
+        // Pausar apenas os que já estão visíveis
         obs.paused = true
         obs.savedPosition = obstaclePosition
       }
     })
 
+    // Limpar obstáculos removidos do array
     allObstacles = allObstacles.filter(obs => obs.element.parentNode !== null)
 
+    // Pausar timers
     if (gameTimer) {
       clearInterval(gameTimer)
       gameTimer = null
@@ -146,12 +125,7 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   function resumeGame() {
-    // NOVO: no modo personalizado, verificar se todas as perguntas foram acertadas
-    if (isCustomMode && customQuestionsAnsweredCorrectly.length >= questions.length && wrongQuestions.length === 0) {
-      winGame()
-      return
-    }
-
+    // Retomar movimento dos obstáculos
     allObstacles.forEach(obs => {
       if (obs.paused && obs.element.parentNode) {
         obs.paused = false
@@ -159,9 +133,12 @@ document.addEventListener('DOMContentLoaded', () => {
       }
     })
 
+    // Retomar timers
     startSpeedIncrease()
 
+    // Retomar ability timer se estava ativo
     if (timeAbility > 0 && !abilityTimer) {
+      // Recalcular tempo restante e reiniciar
       startAbilityTimer(typeAbility === 2 ? 50 : 20)
     }
   }
@@ -177,10 +154,11 @@ document.addEventListener('DOMContentLoaded', () => {
         return
       }
 
-      obstaclePosition -= 10 * gameSpeed
+      obstaclePosition -= (timeAbility > 0 && typeAbility == 2 ? 10 * 0.2 : 10) * gameSpeed
       obstacle.style.left = obstaclePosition + 'px'
 
-      if (obstaclePosition > 0 && obstaclePosition < 64 && studentPosition < 27 && !obstacle.processado && !isQuestionActive && typeAbility !== 2) {
+      // Colisão - PROTEÇÃO: não detecta colisão durante perguntas
+      if (obstaclePosition > 0 && obstaclePosition < 64 && studentPosition < 27 && !obstacle.processado && !isQuestionActive) {
         obstacle.processado = true
 
         if (typer == 1) {
@@ -216,6 +194,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
       }
 
+      // Perda de vida por passar - PROTEÇÃO: não perde vida durante perguntas
       if (obstaclePosition < -60 && !obstacle.vidaPerdida && !isQuestionActive) {
         clearInterval(obs.moveInterval)
         if (obstacle.parentNode) {
@@ -298,74 +277,26 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   }
 
-  // NOVO: escolhe a próxima pergunta a exibir
-  // Prioridade: perguntas erradas pendentes > perguntas novas não usadas
-  function pickNextQuestion() {
-    // Se há perguntas erradas na fila, repetir a primeira delas
-    if (wrongQuestions.length > 0) {
-      return { questionData: wrongQuestions[0], isRetry: true }
-    }
-
-    // Perguntas novas ainda não respondidas corretamente
-    let availableQuestions = questions.filter((_, index) => !customQuestionsAnsweredCorrectly.includes(index) && !usedQuestions.includes(index))
-
-    // Se não há novas mas ainda há não acertadas (pode acontecer entre rodadas)
-    if (availableQuestions.length === 0) {
-      // Resetar usedQuestions para perguntas que ainda não foram acertadas
-      usedQuestions = []
-      availableQuestions = questions.filter((_, index) => !customQuestionsAnsweredCorrectly.includes(index))
-    }
-
-    if (availableQuestions.length === 0) {
-      return null // Todas acertadas
-    }
-
-    const randomIndex = Math.floor(Math.random() * availableQuestions.length)
-    const questionData = availableQuestions[randomIndex]
-    const originalIndex = questions.indexOf(questionData)
-    usedQuestions.push(originalIndex)
-
-    return { questionData, isRetry: false, originalIndex }
-  }
-
   function showQuestion() {
     if (isQuestionActive) return
 
     isQuestionActive = true
 
-    setTimeout(() => trianguloActive = true, 20);
+    // Selecionar pergunta aleatória não usada
+    let availableQuestions = questions.filter((_, index) => !usedQuestions.includes(index))
 
-    let pickedData, questionData, isRetry, originalIndex
-
-    if (isCustomMode) {
-      // Modo personalizado: usa a fila de erradas + novas
-      pickedData = pickNextQuestion()
-
-      if (!pickedData) {
-        // Todas as perguntas foram acertadas — vitória
-        isQuestionActive = false
-        winGame()
-        return
-      }
-
-      questionData = pickedData.questionData
-      isRetry = pickedData.isRetry
-      originalIndex = isRetry ? questions.indexOf(questionData) : pickedData.originalIndex
-    } else {
-      // Modo padrão: comportamento original
-      let availableQuestions = questions.filter((_, index) => !usedQuestions.includes(index))
-
-      if (availableQuestions.length === 0) {
-        usedQuestions = []
-        availableQuestions = questions
-      }
-
-      const randomIndex = Math.floor(Math.random() * availableQuestions.length)
-      questionData = availableQuestions[randomIndex]
-      originalIndex = questions.indexOf(questionData)
-      usedQuestions.push(originalIndex)
-      isRetry = false
+    // Se todas as perguntas foram usadas, resetar
+    if (availableQuestions.length === 0) {
+      usedQuestions = []
+      availableQuestions = questions
     }
+
+    setTimeout(trianguloActive = true, 20);
+
+    const randomIndex = Math.floor(Math.random() * availableQuestions.length)
+    const questionData = availableQuestions[randomIndex]
+    const originalIndex = questions.indexOf(questionData)
+    usedQuestions.push(originalIndex)
 
     // Criar overlay
     const overlay = document.createElement('div')
@@ -397,65 +328,24 @@ document.addEventListener('DOMContentLoaded', () => {
       position: relative;
     `
 
-    // NOVO: badge "Tente novamente!" se for repetição de pergunta errada
-    if (isRetry) {
-      const retryBadge = document.createElement('div')
-      retryBadge.textContent = '🔁 Tente novamente!'
-      retryBadge.style.cssText = `
-        position: absolute;
-        top: 10px;
-        left: 10px;
-        font-family: "Micro 5", sans-serif;
-        font-size: 14px;
-        color: #ff6600;
-        background-color: rgba(255, 165, 0, 0.2);
-        padding: 3px 10px;
-        border-radius: 5px;
-        border: 2px solid #ff6600;
-      `
-      questionContainer.appendChild(retryBadge)
-    }
-
-    // NOVO: no modo personalizado, exibir progresso
-    if (isCustomMode) {
-      const progressDisplay = document.createElement('div')
-      const totalQuestions = questions.length
-      const answeredCorrectly = customQuestionsAnsweredCorrectly.length
-      progressDisplay.textContent = `✅ ${answeredCorrectly}/${totalQuestions}`
-      progressDisplay.style.cssText = `
-        position: absolute;
-        top: 10px;
-        right: 10px;
-        font-family: "Micro 5", sans-serif;
-        font-size: 20px;
-        font-weight: bold;
-        color: #007700;
-        background-color: rgba(0, 200, 0, 0.15);
-        padding: 5px 12px;
-        border-radius: 5px;
-        border: 2px solid #007700;
-      `
-      questionContainer.appendChild(progressDisplay)
-    } else {
-      // Timer display (só no modo padrão)
-      const timerDisplay = document.createElement('div')
-      timerDisplay.id = 'questionTimer'
-      timerDisplay.style.cssText = `
-        position: absolute;
-        top: 10px;
-        right: 10px;
-        font-family: "Micro 5", sans-serif;
-        font-size: 32px;
-        font-weight: bold;
-        color: #ff0000;
-        background-color: rgba(255, 255, 0, 0.3);
-        padding: 5px 15px;
-        border-radius: 5px;
-        border: 2px solid #ff0000;
-      `
-      timerDisplay.textContent = questionData.timeLimit
-      questionContainer.appendChild(timerDisplay)
-    }
+    // Timer display
+    const timerDisplay = document.createElement('div')
+    timerDisplay.id = 'questionTimer'
+    timerDisplay.style.cssText = `
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      font-family: "Micro 5", sans-serif;
+      font-size: 32px;
+      font-weight: bold;
+      color: #ff0000;
+      background-color: rgba(255, 255, 0, 0.3);
+      padding: 5px 15px;
+      border-radius: 5px;
+      border: 2px solid #ff0000;
+    `
+    timerDisplay.textContent = questionData.timeLimit
+    questionContainer.appendChild(timerDisplay)
 
     // Título da pergunta
     const questionTitle = document.createElement('h2')
@@ -505,7 +395,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (questionTimerInterval) {
           clearInterval(questionTimerInterval)
         }
-        handleAnswer(index, questionData.correct, overlay, originalIndex, questionData)
+        handleAnswer(index, questionData.correct, overlay)
       }
 
       buttons.push(button)
@@ -515,32 +405,26 @@ document.addEventListener('DOMContentLoaded', () => {
     overlay.appendChild(questionContainer)
     document.body.appendChild(overlay)
 
-    // Iniciar contagem regressiva APENAS no modo padrão
-    if (!isCustomMode) {
-      let timeRemaining = questionData.timeLimit
-      questionTimerInterval = setInterval(() => {
-        timeRemaining--
-        const timerDisplay = document.getElementById('questionTimer')
-        if (timerDisplay) timerDisplay.textContent = timeRemaining
+    // Iniciar contagem regressiva
+    let timeRemaining = questionData.timeLimit
+    questionTimerInterval = setInterval(() => {
+      timeRemaining--
+      timerDisplay.textContent = timeRemaining
 
-        if (timeRemaining <= 3) {
-          if (timerDisplay) {
-            timerDisplay.style.backgroundColor = 'rgba(255, 0, 0, 0.5)'
-            timerDisplay.style.animation = 'pulse 0.5s infinite'
-          }
-        } else if (timeRemaining <= 5) {
-          if (timerDisplay) {
-            timerDisplay.style.backgroundColor = 'rgba(255, 165, 0, 0.4)'
-          }
-        }
+      // Mudar cor conforme o tempo acaba
+      if (timeRemaining <= 3) {
+        timerDisplay.style.backgroundColor = 'rgba(255, 0, 0, 0.5)'
+        timerDisplay.style.animation = 'pulse 0.5s infinite'
+      } else if (timeRemaining <= 5) {
+        timerDisplay.style.backgroundColor = 'rgba(255, 165, 0, 0.4)'
+      }
 
-        if (timeRemaining <= 0) {
-          clearInterval(questionTimerInterval)
-          handleTimeOut(overlay)
-        }
-      }, 1000)
-    }
-    // No modo personalizado: sem timer — a pergunta fica até o jogador responder
+      if (timeRemaining <= 0) {
+        clearInterval(questionTimerInterval)
+        // Tempo esgotado - perde vida
+        handleTimeOut(overlay)
+      }
+    }, 1000)
   }
 
   function handleTimeOut(overlay) {
@@ -559,6 +443,7 @@ document.addEventListener('DOMContentLoaded', () => {
       overlay.remove()
       resumeGame()
     } else {
+      // Game over
       document.querySelectorAll('.coracao')[0].style.display = 'none'
       lives = 0
       overlay.remove()
@@ -566,34 +451,16 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   }
 
-  // MODIFICADO: recebe originalIndex e questionData para controle de repetição
-  function handleAnswer(selectedIndex, correctIndex, overlay, originalIndex, questionData) {
+  function handleAnswer(selectedIndex, correctIndex, overlay) {
     isQuestionActive = false
 
     if (selectedIndex === correctIndex) {
-      // Resposta correta
-
-      if (isCustomMode) {
-        // Remover da fila de erradas se estava lá
-        wrongQuestions = wrongQuestions.filter(q => q !== questionData)
-
-        // Marcar como acertada (se ainda não estava)
-        if (!customQuestionsAnsweredCorrectly.includes(originalIndex)) {
-          customQuestionsAnsweredCorrectly.push(originalIndex)
-          updateTimeDisplay()
-        }
-
-        // Verificar se todas as perguntas foram acertadas
-        if (customQuestionsAnsweredCorrectly.length >= questions.length && wrongQuestions.length === 0) {
-          overlay.remove()
-          winGame()
-          return
-        }
-      }
-
+      // Resposta correta - dar habilidade aleatória
       const abilityType = Math.floor(Math.random() * 3) + 1
 
+
       if (abilityType === 1) {
+        // Brecha no espaço-tempo (Yoru)
         spacetimeGaps = Math.floor(Math.pow(Math.random(), 3) * 7 + 3)
         maxSpacetimeGaps = spacetimeGaps
         changeSkin('yoru')
@@ -604,6 +471,7 @@ document.addEventListener('DOMContentLoaded', () => {
         perfil.src = "../midia/personagem/perfil/yoru.png"
         updateAbilityBar(100, true)
       } else {
+        // Super velocidade (Flash)
         typeAbility = 2
         changeSkin('flash')
         songFlash.currentTime = 0;
@@ -614,18 +482,15 @@ document.addEventListener('DOMContentLoaded', () => {
         startAbilityTimer(50)
       }
 
+      // Mostrar feedback positivo
       overlay.remove()
       resumeGame()
     } else {
-      // Resposta errada
+      // Resposta errada - perder vida
       trianguloActive = false
       triangulo = false
 
-      // NOVO: no modo personalizado, adicionar à fila de repetição (se ainda não estiver)
-      if (isCustomMode && !wrongQuestions.includes(questionData)) {
-        wrongQuestions.push(questionData)
-      }
-
+      
       if (lives > 1) {
         if (lives == 3) {
           document.querySelectorAll('.coracao')[2].style.display = 'none'
@@ -637,6 +502,7 @@ document.addEventListener('DOMContentLoaded', () => {
         overlay.remove()
         resumeGame()
       } else {
+        // Game over
         document.querySelectorAll('.coracao')[0].style.display = 'none'
         lives = 0
         overlay.remove()
@@ -691,7 +557,7 @@ document.addEventListener('DOMContentLoaded', () => {
     if (!start && spacetimeGaps == 0) {
       const music = document.getElementById('music');
       music.play();
-      music.volume = 0.05;
+      music.volume = 0.05; // Diminui o volume em 0.1 (ou 10%)
       createObstacle(1)
       scheduleNextObstacle()
       start = true
@@ -804,7 +670,8 @@ document.addEventListener('DOMContentLoaded', () => {
       obstaclePosition -= 10 * gameSpeed
       obstacle.style.left = obstaclePosition + 'px'
 
-      if (obstaclePosition > 0 && obstaclePosition < 64 && studentPosition < 27 && !obstacle.processado && !isQuestionActive && typeAbility !== 2) {
+      // Colisão - PROTEÇÃO: não detecta colisão durante perguntas
+      if (obstaclePosition > 0 && obstaclePosition < 64 && studentPosition < 27 && !obstacle.processado && !isQuestionActive) {
         obstacle.processado = true
 
         if (typer == 1) {
@@ -840,6 +707,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
       }
 
+      // Perda de vida por passar - PROTEÇÃO: não perde vida durante perguntas
       if (obstaclePosition < -60 && !obstacle.vidaPerdida && !isQuestionActive) {
         clearInterval(obsData.moveInterval)
         if (obstacle.parentNode) {
@@ -894,6 +762,7 @@ document.addEventListener('DOMContentLoaded', () => {
     obstacle.style.backgroundRepeat = 'no-repeat'
     obstacle.style.backgroundPosition = 'center'
 
+    // Inicializar flags de controle
     obstacle.processado = false
     obstacle.atravessado = false
     obstacle.vidaPerdida = false
@@ -934,7 +803,7 @@ document.addEventListener('DOMContentLoaded', () => {
   function scheduleNextObstacle() {
     if (isGameOver) return
 
-    const baseTime = 1500
+    const baseTime = timeAbility > 0 && typeAbility == 2 ? 3000 : 1500
     const adjustedTime = baseTime / gameSpeed
     const randomTime = Math.random() * adjustedTime + adjustedTime
 
@@ -986,18 +855,19 @@ document.addEventListener('DOMContentLoaded', () => {
 
     gameTimer = setInterval(() => {
       if (!isGameOver && start) {
-        // NOVO: no modo personalizado o timer geral não conta (jogo é infinito)
-        if (!isCustomMode) {
+        gameTime++
+        updateTimeDisplay()
+
+        if (typeAbility === 2) {
           gameTime++
           updateTimeDisplay()
-
-          if (gameTime >= maxGameTime) {
-            winGame()
-            return
-          }
         }
 
-        // Aumento de velocidade acontece em ambos os modos
+        if (gameTime >= maxGameTime) {
+          winGame()
+          return
+        }
+
         if (gameTime % 10 === 0 && gameSpeed < 2) {
           gameSpeed += 0.1
         }
@@ -1041,10 +911,13 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   function createTimeDisplay() {
+    // BUG CORRIGIDO: Verificar se já existe antes de criar
     if (document.getElementById('timerContainer')) return
 
+    // Adicionar estilos CSS responsivos
     const style = document.createElement('style')
     style.textContent = `
+
       #timerContainer {
         flex-shrink: 0;
         height: 40px;
@@ -1069,19 +942,36 @@ document.addEventListener('DOMContentLoaded', () => {
       }
 
       @keyframes fadeIn {
-        from { opacity: 0; }
-        to { opacity: 1; }
+        from {
+          opacity: 0;
+        }
+        to {
+          opacity: 1;
+        }
       }
 
       @keyframes feedbackPop {
-        0% { transform: translate(-50%, -50%) scale(0.5); opacity: 0; }
-        50% { transform: translate(-50%, -50%) scale(1.2); opacity: 1; }
-        100% { transform: translate(-50%, -50%) scale(1); opacity: 1; }
+        0% {
+          transform: translate(-50%, -50%) scale(0.5);
+          opacity: 0;
+        }
+        50% {
+          transform: translate(-50%, -50%) scale(1.2);
+          opacity: 1;
+        }
+        100% {
+          transform: translate(-50%, -50%) scale(1);
+          opacity: 1;
+        }
       }
 
       @keyframes pulse {
-        0%, 100% { transform: scale(1); }
-        50% { transform: scale(1.1); }
+        0%, 100% {
+          transform: scale(1);
+        }
+        50% {
+          transform: scale(1.1);
+        }
       }
     `
     document.head.appendChild(style)
@@ -1091,12 +981,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const timerText = document.createElement('span')
     timerText.id = 'timerText'
-
-    // NOVO: no modo personalizado, exibir "∞" no lugar do contador
-    timerText.textContent = isCustomMode ? '∞' : '4:00'
+    timerText.textContent = '7:00'
 
     timerContainer.appendChild(timerText)
 
+    // Adicionar dentro da dialog-box
     const dialogBox = document.querySelector('.dialog-box')
     if (dialogBox) {
       dialogBox.appendChild(timerContainer)
@@ -1108,15 +997,10 @@ document.addEventListener('DOMContentLoaded', () => {
   function updateTimeDisplay() {
     const timerText = document.getElementById('timerText')
     if (timerText) {
-      // NOVO: no modo personalizado, o display mostra progresso das perguntas
-      if (isCustomMode) {
-        timerText.textContent = `${customQuestionsAnsweredCorrectly.length}/${questions.length}`
-      } else {
-        const remainingTime = maxGameTime - gameTime
-        const minutes = Math.floor(remainingTime / 60)
-        const seconds = remainingTime % 60
-        timerText.textContent = `${minutes}:${seconds.toString().padStart(2, '0')}`
-      }
+      const remainingTime = maxGameTime - gameTime
+      const minutes = Math.floor(remainingTime / 60)
+      const seconds = remainingTime % 60
+      timerText.textContent = `${minutes}:${seconds.toString().padStart(2, '0')}`
     }
   }
 })

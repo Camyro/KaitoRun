@@ -1,0 +1,181 @@
+@import url('https://fonts.googleapis.com/css2?family=Micro+5&family=Press+Start+2P&display=swap');
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html, body {
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  font-family: "Micro 5", sans-serif;
+}
+
+/* BACKGROUNDS */
+#buildings-medium {
+  position: fixed;
+  bottom: 180px;
+  left: 0;
+  width: 100%;
+  height: calc(100vh - 180px);
+  background-image: url('midia/ambiente/floresta.png');
+  background-repeat: repeat-x;
+  background-size: auto 100%;
+  background-position: bottom;
+  animation: slideright 700s infinite linear;
+  z-index: 1;
+}
+
+#buildings-near {
+  position: fixed;
+  bottom: 180px;
+  left: 0;
+  width: 100%;
+  height: calc(100vh - 180px);
+  background-image: url('midia/ambiente/cazonas.png');
+  background-repeat: repeat-x;
+  background-size: auto 100%;
+  background-position: bottom;
+  animation: slideright 500s infinite linear;
+  z-index: 2;
+}
+
+#world {
+  position: fixed;
+  bottom: 0;
+  width: 100%;
+  height: 200px;
+  background-image: url('midia/ambiente/estrada.png');
+  background-repeat: repeat-x;
+  animation: slideright 500s infinite linear;
+  z-index: 3;
+}
+
+@keyframes slideright {
+  from { background-position: 0 bottom; }
+  to { background-position: -10000px bottom; }
+}
+
+/* PERSONAGEM */
+.student-container {
+  position: fixed;
+  bottom: 200px;
+  left: 50px;
+  width: 27px;
+  height: 63px;
+  z-index: 10;
+}
+
+.student {
+  width: 100%;
+  height: 100%;
+  background-image: url('midia/personagem/gif/personagem.gif');
+  background-repeat: no-repeat;
+  background-size: contain;
+}
+
+/* MENU */
+#menu-overlay {
+  position: fixed;
+  bottom: 210px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 20;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+  padding: 0 16px;
+}
+
+#game-title {
+  font-size: clamp(40px, 8vw, 80px);
+  color: #fff;
+  text-shadow:
+    3px 3px 0 #000,
+    -1px -1px 0 #000,
+    1px -1px 0 #000,
+    -1px 1px 0 #000;
+  margin-bottom: 16px;
+  line-height: 1;
+  white-space: nowrap;
+  text-align: center;
+}
+
+.menu-btn {
+  display: block;
+  text-decoration: none;
+  font-family: 'Press Start 2P', monospace;
+  font-size: clamp(8px, 1.5vw, 11px);
+  color: #111;
+  background: #f0f0e8;
+  border: 3px solid #111;
+  padding: 9px 0;
+  margin-bottom: 10px;
+  width: min(220px, 80vw);
+  text-align: center;
+  box-shadow: 4px 4px 0 #111;
+  transition: 0.05s;
+  cursor: pointer;
+}
+
+.menu-btn:hover {
+  background: #f5c518;
+  transform: translate(-2px, -2px);
+  box-shadow: 6px 6px 0 #111;
+}
+
+.menu-btn:active {
+  transform: translate(2px, 2px);
+  box-shadow: 2px 2px 0 #111;
+}
+
+/* RESPONSIVO */
+@media (max-width: 480px) {
+  #buildings-medium,
+  #buildings-near {
+    bottom: 120px;
+    height: calc(100vh - 120px);
+  }
+
+  #world { height: 130px; }
+
+  .student-container {
+    bottom: 130px;
+    left: 20px;
+  }
+
+  #menu-overlay { bottom: 140px; }
+
+  #game-title {
+    font-size: clamp(32px, 9vw, 52px);
+  }
+}
+
+@media (max-height: 500px) {
+  #buildings-medium,
+  #buildings-near {
+    bottom: 100px;
+    height: calc(100vh - 100px);
+  }
+
+  #world { height: 110px; }
+
+  .student-container { bottom: 110px; }
+
+  #menu-overlay { bottom: 120px; }
+
+  #game-title {
+    font-size: 32px;
+    margin-bottom: 10px;
+  }
+
+  .menu-btn {
+    padding: 7px 0;
+    margin-bottom: 4px;
+  }
+}

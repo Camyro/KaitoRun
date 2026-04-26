@@ -5,151 +5,21 @@
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Inicio</title>
-
-  <style>
-    @import url('https://fonts.googleapis.com/css2?family=Micro+5&family=Pixelify+Sans:wght@400..700&display=swap');
-
-    html body {
-      margin: 0;
-      font-family: "Micro 5", sans-serif;
-      font-weight: 400;
-      font-style: normal;
-    }
-    
-    main {
-      width: 100%;
-      height: 50%;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: space-evenly;
-      height: 100vh;
-      color: white;
-    }
-
-    a {
-      text-decoration: none;
-      color: black;
-      font-size: 20px;
-      padding: 10px 20px;
-      border: 2px solid black;
-      border-radius: 5px;
-      background-color: #f0f0f0;
-      transition: background-color 0.3s, color 0.3s;
-    }
-
-    #world {
-      position: absolute;
-      bottom: 0px;
-      background-image: url('midia/ambiente/estrada.png');
-      background-repeat: repeat-x;
-      animation: slideright 600s infinite linear;
-      -webkit-animation: slideright 600s infinite linear;
-      width: 100%;
-      height: 200px;
-      z-index: 50;
-    }
-
-    .student {
-      position: absolute;
-      width: 27px;
-      height: 63px;
-      background-image: url('midia/personagem/gif/personagem.gif');
-      bottom: 0px;
-    }
-
-    .student-container {
-      position: absolute;
-      bottom: 0;
-      left: 50px;
-      width: 60px;
-      height: 60px;
-      z-index: 15;
-    }
-
-    .student-skin {
-      position: absolute;
-      width: 100%;
-      height: 100%;
-      background-size: contain;
-      background-repeat: no-repeat;
-      opacity: 0;
-      transition: opacity 0.1s ease;
-      pointer-events: none;
-    }
-
-    .student-skin.active {
-      opacity: 1;
-    }
-
-    .student-skin[data-skin="normal"] {
-      background-image: url('personagem/gif/personagem.gif');
-    }
-
-    /* Camada 3 - Prédios médios */
-    #buildings-medium {
-      position: fixed;
-      bottom: 180px;
-      left: 0;
-      width: 100%;
-      height: calc(100vh - 180px);
-      background-image: url('midia/ambiente/floresta.png');
-      background-repeat: repeat-x;
-      background-size: auto 100%;
-      background-position: bottom;
-      animation: slideright 700s infinite linear;
-      z-index: 30;
-    }
-
-    /* Camada 4 - Prédios próximos */
-    #buildings-near {
-      position: fixed;
-      bottom: 180px;
-      left: 0;
-      width: 100%;
-      height: calc(100vh - 180px);
-      background-image: url('midia/ambiente/cazonas.png');
-      background-repeat: repeat-x;
-      background-size: auto 100%;
-      background-position: bottom;
-      animation: slideright 500s infinite linear;
-      z-index: 40;
-    }
-
-    /* Camada 5 - Chão/Estrada (mais próxima, mais rápida) */
-    #world {
-      position: absolute;
-      bottom: 0px;
-      background-image: url('midia/ambiente/estrada.png');
-      background-repeat: repeat-x;
-      animation: slideright 500s infinite linear;
-      -webkit-animation: slideright 500s infinite linear;
-      width: 100%;
-      height: 200px;
-      z-index: 50;
-    }
-  </style>
-  
+  <link rel="stylesheet" href="style.css">
 </head>
 <body>
   <div id="buildings-medium"></div>
   <div id="buildings-near"></div>
-
-  <main id="world"></main>
-
-  <div class="grid">
-    <div class="student-container">
-      <div class="student-skin active" data-skin="normal"></div>
-      <div class="student-skin" data-skin="jakeStop"></div>
-      <div class="student-skin" data-skin="jake"></div>
-      <div class="student-skin" data-skin="flash"></div>
-      <div class="student-skin" data-skin="yoru"></div>
-    </div>
+  <div id="world"></div>
+  <div class="student-container">
+    <div class="student"></div>
   </div>
-  
-  <main style="position: absolute; bottom: 0px; z-index: 100;">
-    <h1 style="font-size: 50px;">Kaito Run - Beta</h1>
-    <a href="../theBeginning/">Start</a>
-  </main>
+  <div id="menu-overlay">
+    <div id="game-title">Kaito Run - Beta</div>
+    <a href="../theBeginning/" class="menu-btn">▶ Start</a>
+    <a href="../tutorial/" class="menu-btn">▶ Tutorial</a>
+    <a href="../questions/" class="menu-btn">▶ Questions</a>
+  </div>
+
 </body>
 </html>
