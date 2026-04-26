@@ -1,4 +1,7 @@
 const STORAGE_KEY = 'quizPacks_v1';
+const AI_LIMIT_KEY = 'aiGen_limits_v1';
+const AI_MAX_PER_DAY = 10;
+const API_URL = 'https://mesinhasserver.vercel.app/api/chat.js';
 const LETTERS = ['A','B','C','D'];
 
 const DEFAULT_PACK = {
@@ -34,6 +37,205 @@ function loadPacks() {
 function savePacks() { localStorage.setItem(STORAGE_KEY, JSON.stringify(packs)); }
 
 function uid() { return Date.now().toString(36) + Math.random().toString(36).slice(2,7); }
+
+/* ════════════════════════════════════════════════════
+   AI LIMIT — localStorage, 10 req / 24h
+═══════════════════════════════════════════════════════ */
+function getAiLimits() {
+  try {
+    const r = localStorage.getItem(AI_LIMIT_KEY);
+    return r ? JSON.parse(r) : { timestamps: [] };
+  } catch { return { timestamps: [] }; }
+}
+
+function saveAiLimits(data) {
+  localStorage.setItem(AI_LIMIT_KEY, JSON.stringify(data));
+}
+
+function getAiUsageToday() {
+  const data = getAiLimits();
+  const now = Date.now();
+  const oneDayAgo = now - 24 * 60 * 60 * 1000;
+  data.timestamps = data.timestamps.filter(t => t > oneDayAgo);
+  saveAiLimits(data);
+  return data.timestamps.length;
+}
+
+function goBackFolder() {
+  window.location.href = "../";
+}
+
+function consumeAiRequest() {
+  const data = getAiLimits();
+  const now = Date.now();
+  const oneDayAgo = now - 24 * 60 * 60 * 1000;
+  data.timestamps = data.timestamps.filter(t => t > oneDayAgo);
+  data.timestamps.push(now);
+  saveAiLimits(data);
+}
+
+function canUseAi() {
+  return getAiUsageToday() < AI_MAX_PER_DAY;
+}
+
+/* ════════════════════════════════════════════════════
+   AI GENERATE MODAL
+═══════════════════════════════════════════════════════ */
+function openAiModal() {
+  updateAiLimitBar();
+  document.getElementById('aiInput').value = '';
+  document.getElementById('aiLoading').classList.remove('visible');
+  document.getElementById('aiGenerateBtn').disabled = false;
+  document.getElementById('aiModal').classList.add('open');
+}
+
+function closeAiModal() {
+  document.getElementById('aiModal').classList.remove('open');
+}
+
+function updateAiLimitBar() {
+  const used = getAiUsageToday();
+  const pct = Math.round((used / AI_MAX_PER_DAY) * 100);
+  const fill = document.getElementById('aiLimitFill');
+  const label = document.getElementById('aiLimitLabel');
+  fill.style.width = pct + '%';
+  fill.className = 'ai-limit-bar-fill' + (pct >= 100 ? ' full' : pct >= 70 ? ' warn' : '');
+  label.textContent = used + ' / ' + AI_MAX_PER_DAY + ' hoje';
+}
+
+function setAiExample(text) {
+  document.getElementById('aiInput').value = text;
+  document.getElementById('aiInput').focus();
+}
+
+async function runAiGenerate() {
+  const input = document.getElementById('aiInput').value.trim();
+  if (!input) { toast('Digite um tema ou lista de perguntas.', true); return; }
+
+  if (!canUseAi()) {
+    toast('Limite diário de 10 gerações atingido. Volte amanhã!', true);
+    return;
+  }
+
+  const btn = document.getElementById('aiGenerateBtn');
+  const loading = document.getElementById('aiLoading');
+  btn.disabled = true;
+  loading.classList.add('visible');
+  loading.textContent = '⏳ Gerando questões...';
+
+  const SYSTEM_PROMPT = `Você é um gerador especializado de questões de quiz educacional. Sua única função é criar questões de múltipla escolha estruturadas em JSON.
+
+REGRAS ABSOLUTAS:
+1. Responda SOMENTE com JSON válido, sem texto antes ou depois, sem markdown, sem \`\`\`.
+2. Se o input for uma pergunta, comentário, saudação, pedido de ajuda, ou qualquer coisa que NÃO seja um tema de quiz ou lista de perguntas → responda exatamente: {"error":"INPUT_INVALIDO"}
+3. Se o input for um tema, palavra, frase ou lista de perguntas → gere questões de quiz sobre aquilo.
+
+INTERPRETAÇÃO DO INPUT:
+- "matemática" → gere 5 questões de matemática geral
+- "triângulos" → gere 5 questões sobre triângulos
+- "5 questões de triângulos" → gere EXATAMENTE 5 questões sobre triângulos
+- "triângulos na física" → gere 5 questões de triângulos aplicados à física
+- "10 questões de história" → gere EXATAMENTE 10 questões de história
+- Lista bruta (ex: "qual é minha cor preferida? Azul") → adapte cada item para o formato de múltipla escolha com 4 opções, onde uma é claramente correta
+
+PADRÃO DE QUANTIDADE: Se não especificado, gere 5 questões. Máximo 10 por vez.
+
+FORMATO DE SAÍDA (JSON obrigatório):
+{
+  "packName": "Nome sugerido para o pack",
+  "questions": [
+    {
+      "question": "Texto da pergunta?",
+      "options": ["Opção A", "Opção B", "Opção C", "Opção D"],
+      "correct": 0,
+      "timeLimit": 10
+    }
+  ]
+}
+
+REGRAS DAS QUESTÕES:
+- Sempre 4 opções (options[0..3])
+- "correct" é o índice (0-3) da resposta correta
+- "timeLimit" entre 8 e 20 segundos (perguntas difíceis = mais tempo)
+- Questões claras, educativas, com apenas UMA resposta inequivocamente correta
+- Distribua a posição da resposta correta (não coloque sempre em 0)
+- NÃO inclua explicações, só o JSON`;
+
+  try {
+    consumeAiRequest();
+    updateAiLimitBar();
+
+    const response = await fetch(API_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        message: input,
+        system: SYSTEM_PROMPT,
+        history: [],
+        forceEngine: 'cerebras'
+      })
+    });
+
+    if (!response.ok) throw new Error('HTTP ' + response.status);
+
+    const data = await response.json();
+    const rawReply = data.reply || '';
+
+    let parsed;
+    try {
+      const clean = rawReply.replace(/```json|```/g, '').trim();
+      parsed = JSON.parse(clean);
+    } catch {
+      throw new Error('JSON inválido na resposta da IA');
+    }
+
+    if (parsed.error === 'INPUT_INVALIDO') {
+      loading.classList.remove('visible');
+      btn.disabled = false;
+      toast('❌ Digite um tema de quiz (ex: "matemática", "5 questões de física")', true);
+      return;
+    }
+
+    if (!parsed.questions || !Array.isArray(parsed.questions) || parsed.questions.length === 0) {
+      throw new Error('Nenhuma questão gerada');
+    }
+
+    // Valida e normaliza cada questão
+    const validQuestions = parsed.questions.filter(q =>
+      q.question && Array.isArray(q.options) && q.options.length === 4 &&
+      typeof q.correct === 'number' && q.correct >= 0 && q.correct <= 3
+    ).map(q => ({
+      question: String(q.question).trim(),
+      options: q.options.map(o => String(o).trim()),
+      correct: q.correct,
+      timeLimit: (typeof q.timeLimit === 'number' && q.timeLimit >= 3 && q.timeLimit <= 120) ? q.timeLimit : 10
+    }));
+
+    if (validQuestions.length === 0) throw new Error('Questões inválidas na resposta');
+
+    // Cria o pack
+    const packName = (parsed.packName && String(parsed.packName).trim()) || ('IA: ' + input.slice(0, 30));
+    const newPack = {
+      id: uid(),
+      name: packName,
+      locked: false,
+      questions: validQuestions
+    };
+    packs.push(newPack);
+    savePacks();
+    selectedId = newPack.id;
+    renderSidebar();
+    renderDetail();
+    closeAiModal();
+    toast('✨ ' + validQuestions.length + ' questões geradas!');
+
+  } catch (err) {
+    console.error('AI Generate error:', err);
+    loading.classList.remove('visible');
+    btn.disabled = false;
+    toast('❌ Erro ao gerar questões. Tente novamente.', true);
+  }
+}
 
 /* ── SIDEBAR ── */
 function renderSidebar() {
@@ -264,6 +466,7 @@ document.getElementById('confirmOkBtn').onclick = () => { if (_cb) _cb(); closeC
 
 document.getElementById('questionModal').addEventListener('click', e => { if (e.target === e.currentTarget) closeModal(); });
 document.getElementById('confirmOverlay').addEventListener('click', e => { if (e.target === e.currentTarget) closeConfirm(); });
+document.getElementById('aiModal').addEventListener('click', e => { if (e.target === e.currentTarget) closeAiModal(); });
 
 /* ── TOAST ── */
 function toast(msg, error = false) {

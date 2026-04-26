@@ -15,6 +15,7 @@
   <!-- HEADER -->
   <header class="header">
     <button class="btn-hamburger" onclick="toggleSidebar()">☰</button>
+    <button class="btn btn-sm" onclick="goBackFolder()">Voltar</button>
     <div class="header-logo">Questions</div>
     <div class="header-sub">Manager</div>
   </header>
@@ -23,13 +24,20 @@
   <div class="sidebar-backdrop" id="sidebarBackdrop" onclick="closeSidebar()"></div>
 
   <!-- SIDEBAR -->
-  <aside class="sidebar">
+  <div class="sidebar">
     <div class="sidebar-head">
       <span class="sidebar-title">PACKS</span>
-      <button class="btn btn-primary btn-sm" onclick="openNewPackModal()">+ Novo</button>
+      <div style="display:flex;gap:5px;">
+        <button class="btn btn-sm" style="background:#e8e8e0;color:#111;" onclick="openAiModal()">
+          <img src="../midia/caosb.png" alt="IA Icon" style="width:16px;vertical-align:middle;margin-right:4px;">
+          AI CAOS</button>
+        <button class="btn btn-primary btn-sm" onclick="openNewPackModal()">+ Novo</button>
+      </div>
     </div>
-    <div class="sidebar-list" id="packList"></div>
-  </aside>
+
+    <!-- 👇 ISSO ESTAVA FALTANDO -->
+    <div id="packList" class="pack-list"></div>
+  </div>
 
   <!-- MAIN -->
   <main class="main" id="mainPanel">
@@ -86,6 +94,41 @@
 
 <!-- TOAST -->
 <div class="toast-container" id="toastContainer"></div>
+
+<!-- AI GENERATE MODAL -->
+<div class="ai-modal-overlay" id="aiModal">
+  <div class="ai-modal">
+    <div class="modal-title">
+      <span>Caos AI Generate</span>
+      <button class="btn btn-icon" onclick="closeAiModal()">✕</button>
+    </div>
+
+    <div class="form-group">
+      <label class="form-label">Mande um tema ou lista de perguntas</label>
+      <textarea class="ai-generate-input" id="aiInput"
+        placeholder="Ex: 10 questões de matemática&#10;Ex: Qual o nome da capital do Brasil? R: Brasília"></textarea>
+    </div>
+
+    <div class="form-group">
+      <label class="form-label">Uso diário</label>
+      <div class="ai-limit-bar-wrap">
+        <div class="ai-limit-bar-bg">
+          <div class="ai-limit-bar-fill" id="aiLimitFill" style="width:0%"></div>
+        </div>
+        <span class="ai-limit-label" id="aiLimitLabel">0 / 10 hoje</span>
+      </div>
+    </div>
+
+    <div class="ai-loading-indicator" id="aiLoading">⏳ Gerando questões...</div>
+
+    <div class="modal-footer">
+      <button class="btn" onclick="closeAiModal()">Cancelar</button>
+      <button class="btn btn-sm" style="background:#111;color:#e8e8e0;" id="aiGenerateBtn" onclick="runAiGenerate()">
+        <img src="../midia/caosw.png" alt="IA Icon" style="width:16px;vertical-align:middle;margin-right:4px;">
+        Gerar</button>
+    </div>
+  </div>
+</div>
 
 <script src="script.js"></script>
 </body>
